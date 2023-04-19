@@ -1,0 +1,4 @@
+#!/bin/bash
+
+docker run --rm -v ./sql/migrations:/migrations --network host migrate/migrate \
+  -path=/migrations -database "mysql://root:root@tcp(127.0.0.1:3306)/chat_test" "$@"
