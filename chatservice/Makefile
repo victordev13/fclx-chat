@@ -8,6 +8,6 @@ migratedown:
 	cli/migrate -verbose drop
 
 grpc:
-	protoc --go_out=. --go-grpc_out=. proto/chat.proto
+	docker compose exec chatservice protoc --go_out=. --go-grpc_out=. proto/chat.proto --experimental_allow_proto3_optional
 
 .PHONY: migrate new-migration migratedown grpc

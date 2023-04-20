@@ -12,6 +12,12 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y \
   && rustup default stable \
   && rustup target add x86_64-unknown-linux-gnu
 
+# Instal Protoc to compile gRPC
+RUN apt-get update && \
+    apt-get install -y protobuf-compiler \
+    go install google.golang.org/protobuf/cmd/protoc-gen-go@latest \
+    go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+
 WORKDIR /go/src
 RUN ln -sf /bin/bash /bin/sh
 COPY go.mod go.sum ./
