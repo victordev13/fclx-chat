@@ -1,3 +1,5 @@
+.PHONY: prisma-generate migrations-dev
+
 migrations-dev:
 	npx prisma migrate dev
 

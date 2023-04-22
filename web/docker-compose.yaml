@@ -9,8 +9,8 @@ services:
       - .:/home/node/app
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    # networks:
-    #   - fcexperience
+    depends_on:
+      - db
 
   db:
     image: mysql:8
@@ -24,9 +24,32 @@ services:
       - 3307:3306
     volumes:
       - .docker/mysql:/var/lib/mysql
-    # networks:
-    #   - fcexperience
 
-# networks:
-#   fcexperience:
-#     external: true
+  keycloak_db:
+    image: mysql:8
+    container_name: keycloak_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: keycloak
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin
+    volumes:
+      - .docker/keycloak_db:/var/lib/mysql
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:21.0
+    command: start-dev
+    ports:
+      - 9000:8080
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      DB: keycloak
+      DB_USERNAME: admin
+      DB_PASSWORD: admin
+      DB_URL_HOST: keycloak_db
+      DB_URL_PORT: 3306
+      DB_SCHEMA: keycloak
+    depends_on:
+      - keycloak_db

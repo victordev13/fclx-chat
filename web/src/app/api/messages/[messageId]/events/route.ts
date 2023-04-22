@@ -1,6 +1,7 @@
 import { prisma } from '@/app/prisma/prisma';
 import { ChatServiceClientFactory } from '@/grpc/chat-service-client';
 import { Chat, Message as CoreMessage } from '@prisma/client';
+import { getToken } from 'next-auth/jwt';
 import { NextRequest, NextResponse } from 'next/server';
 
 interface Message extends CoreMessage {
@@ -8,11 +9,23 @@ interface Message extends CoreMessage {
 }
 
 export async function GET(
-  _: NextRequest,
+  request: NextRequest,
   { params }: { params: { messageId: string } }
 ) {
-  let message: Message = {} as Message;
+  const transformStream = new TransformStream();
+  const writer = transformStream.writable.getWriter();
 
+  const token = await getToken({ req: request });
+  if (!token) {
+    setTimeout(async () => {
+      writeStream(writer, 'error', 'Unauthenticated');
+      await writer.close();
+    }, 100);
+
+    return streamResponse(transformStream, 401);
+  }
+
+  let message: Message = {} as Message;
   try {
     message = await prisma.message.findUniqueOrThrow({
       where: {
@@ -33,8 +46,14 @@ export async function GET(
     );
   }
 
-  const transformStream = new TransformStream();
-  const writer = transformStream.writable.getWriter();
+  if (message.chat.user_id !== token.sub) {
+    setTimeout(async () => {
+      writeStream(writer, 'error', 'Not found');
+      await writer.close();
+    }, 100);
+
+    return streamResponse(transformStream, 404);
+  }
 
   if (message.has_answered) {
     setTimeout(async () => {
