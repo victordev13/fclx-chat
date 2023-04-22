@@ -5,14 +5,10 @@
 ![img](./screenshots/diagrama.png)
 
 ------
+### Chat web: 
+![Screenshot from 2023-04-22 18-47-41](https://user-images.githubusercontent.com/45896324/233808799-e883158c-e045-4d33-9161-006cc1490c78.png)
 
-- Migrations:
-  - lib utilizada: [golang-migrate](https://github.com/golang-migrate/migrate)
-  - Comando utilizado para inicializar as migrations:
-  `make new-migration`
-  - no arquivo [query.sql](chatservice/sql/queries/query.sql) são descritos as queries necessárias, com a anotação do método correspondende que vai ser gerado, após preenchido é só executar o comando `cli/sqlc-generate` para gerar o código Go que corresponderá ao "repositório" com os métodos descritos na query.
-
------
+------
 ### Setup:
 
   - execute `make up`
@@ -25,3 +21,13 @@
 
   - setup chatservice:
     - Para que a comunicação com o Chat GPT funcione, gere uma chave de api em [platform.openai.com](https://platform.openai.com) e cole o mesmo em `OPENAI_API_KEY` no seu [chatservice/.env](./chatservice/.env)
+
+------
+
+- Migrations:
+  - lib utilizada: [golang-migrate](https://github.com/golang-migrate/migrate)
+  - Comando utilizado para inicializar as migrations:
+  `make new-migration`
+  - no arquivo [query.sql](chatservice/sql/queries/query.sql) são descritos as queries necessárias, com a anotação do método correspondende que vai ser gerado, após preenchido é só executar o comando `cli/sqlc-generate` para gerar o código Go que corresponderá ao "repositório" com os métodos descritos na query.
+
+-----
